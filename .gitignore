@@ -1,0 +1,11 @@
+.env
+
+# Build Output
+bundles
+.next
+.DS_Store
+logs
+manifest.json
+
+# Dependencies
+node_modules

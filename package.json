@@ -1,0 +1,54 @@
+{
+  "name": "technical_test",
+  "version": "1.0.0",
+  "description": "Kitchen CUT Technical Test",
+  "main": "index.js",
+  "scripts": {
+    "postinstall": "cp -n .env.example .env || true",
+    "dev": "NODE_OPTIONS='--inspect' next dev",
+    "build": "next build",
+    "start": "next start",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "*.{js,jsx}": [
+      "prettier --write",
+      "git add"
+    ]
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jchapple/technical_test.git"
+  },
+  "author": "Jack Chapple <jchapple@gmail.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jchapple/technical_test/issues"
+  },
+  "homepage": "https://github.com/jchapple/technical_test#readme",
+  "engines": {
+    "node": "~14.0.0"
+  },
+  "dependencies": {
+    "knex": "^0.21.4",
+    "mysql2": "^2.1.0",
+    "next": "^9.5.2",
+    "objection": "^2.2.2",
+    "react": "^16.13.1",
+    "react-dom": "^16.13.1",
+    "react-select": "^3.1.0",
+    "swr": "^0.3.0"
+  },
+  "devDependencies": {
+    "dotenv": "^8.2.0",
+    "faker": "Marak/faker.js#master",
+    "husky": "^4.2.5",
+    "lint-staged": "^10.2.11",
+    "prettier": "^2.0.5"
+  }
+}
