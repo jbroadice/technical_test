@@ -5,7 +5,7 @@ import objectToQueryParamsString from "@lib/objectToQueryParamsString";
 
 import LocationSelectInput from "@components/inputs/LocationSelectInput";
 import InvoiceStatusInput from "@components/inputs/InvoiceStatusInput";
-import InvoiceStatusLabel from "labels/InvoiceStatusLabel";
+import InvoiceStatusLabel from "@components/labels/InvoiceStatusLabel";
 
 const getInvoicesApiUrl = (filters = {}) => {
   const { statusType, locationId } = filters;

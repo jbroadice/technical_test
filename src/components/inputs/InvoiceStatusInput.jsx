@@ -1,6 +1,6 @@
 import { useState } from "react";
 import Select from "react-select";
-import InvoiceStatusLabel from "labels/InvoiceStatusLabel";
+import InvoiceStatusLabel from "@components/labels/InvoiceStatusLabel";
 import { INVOICE_STATUS_TYPES } from "appConstants";
 
 const options = INVOICE_STATUS_TYPES.map((value) => ({ value }));
