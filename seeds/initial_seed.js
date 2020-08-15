@@ -28,7 +28,7 @@ exports.seed = async function (knex) {
   // Insert invoice headers
   let invoiceHeaders = [];
 
-  for (let i = 0; i < 150; i++) {
+  for (let i = 0; i < 250; i++) {
     let invoiceLines = [];
     for (let j = 0; j < 5; j++) {
       invoiceLines.push({
