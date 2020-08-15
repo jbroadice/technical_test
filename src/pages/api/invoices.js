@@ -37,15 +37,19 @@ export default async (req, res) => {
     query.where("location_id", locationId);
   }
 
-  // TODO don't output lines
-
   // Execute query
   const invoices = await query
     .modify("defaultOrder")
     .withGraphJoined("[lines, location]");
 
+  const output = JSON.parse(JSON.stringify(invoices)).map((v) => {
+    delete v.lines;
+    delete v.location_id;
+    return v;
+  });
+
   // Respond
   res.statusCode = 200;
   res.setHeader("Content-Type", "application/json");
-  res.end(JSON.stringify({ invoices }));
+  res.end(JSON.stringify({ invoices: output }));
 };
