@@ -1,6 +1,7 @@
 import InvoiceHeader from "@models/InvoiceHeader";
 import Location from "@models/Location";
 import { INVOICE_STATUS_TYPES } from "appConstants";
+import serialize from "@lib/serialize";
 
 export default async (req, res) => {
   require("@lib/db");
@@ -42,7 +43,7 @@ export default async (req, res) => {
     .modify("defaultOrder")
     .withGraphJoined("[lines, location]");
 
-  const output = JSON.parse(JSON.stringify(invoices)).map((v) => {
+  const output = serialize(invoices).map((v) => {
     delete v.lines;
     delete v.location_id;
     return v;
