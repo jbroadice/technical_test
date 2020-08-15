@@ -6,11 +6,14 @@ import objectToQueryParamsString from "@lib/objectToQueryParamsString";
 import LocationSelectInput from "@components/inputs/LocationSelectInput";
 import InvoiceStatusInput from "@components/inputs/InvoiceStatusInput";
 import InvoiceStatusLabel from "@components/labels/InvoiceStatusLabel";
+import DateRangePicker from "@components/inputs/DateRangePicker";
 
 const getInvoicesApiUrl = (filters = {}) => {
-  const { statusType, locationId } = filters;
+  const { dateRange, statusType, locationId } = filters;
 
   const queryParams = objectToQueryParamsString({
+    dateStart: dateRange && dateRange.startDate && dateRange.startDate.toISOString(),
+    dateEnd: dateRange && dateRange.endDate && dateRange.endDate.toISOString(),
     statusType,
     locationId,
   });
@@ -19,12 +22,11 @@ const getInvoicesApiUrl = (filters = {}) => {
 };
 
 const onFilterInputChange = (setFilterFunc) => (option) => {
-  const value = option ? option.value : null;
+  const value = (option && option.value) || option;
   setFilterFunc(value);
 };
 
 function renderTableBody(data) {
-  console.log(data);
   if (!data) return <p>Loading...</p>;
 
   if (data.invoices.length === 0) {
@@ -60,19 +62,25 @@ export async function getServerSideProps() {
 }
 
 export default function Index(props) {
+  const [dateRange, setFilterDateRange] = useState(null);
   const [statusType, setFilterStatus] = useState(null);
   const [locationId, setFilterLocation] = useState(null);
   const [hasRendered, setHasRendered] = useState(false);
 
-  const { data } = useSWR(getInvoicesApiUrl({ statusType, locationId }), fetcher, {
-    initialData: hasRendered ? undefined : props.data,
-  });
+  const { data } = useSWR(
+    getInvoicesApiUrl({ dateRange, statusType, locationId }),
+    fetcher,
+    {
+      initialData: hasRendered ? undefined : props.data,
+    },
+  );
 
   if (!hasRendered) setHasRendered(true);
 
   return (
     <div>
       <div>
+        <DateRangePicker onChange={onFilterInputChange(setFilterDateRange)} />
         <InvoiceStatusInput onChange={onFilterInputChange(setFilterStatus)} />
         <LocationSelectInput onChange={onFilterInputChange(setFilterLocation)} />
       </div>

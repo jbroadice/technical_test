@@ -5,6 +5,12 @@ class InvoiceHeader extends BaseModel {
     return "invoice_headers";
   }
 
+  static modifiers = {
+    defaultOrder(query) {
+      query.orderBy("date");
+    },
+  };
+
   static get relationMappings() {
     return {
       location: {

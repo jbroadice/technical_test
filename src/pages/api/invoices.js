@@ -9,7 +9,15 @@ export default async (req, res) => {
   const query = InvoiceHeader.query();
 
   // Filter query params
-  const { statusType, locationId } = req.query;
+  const { dateStart, dateEnd, statusType, locationId } = req.query;
+
+  // Filter by date
+  if (typeof dateStart !== "undefined" && dateStart.trim()) {
+    query.where("date", ">=", new Date(dateStart));
+  }
+  if (typeof dateEnd !== "undefined" && dateEnd.trim()) {
+    query.where("date", "<=", new Date(dateEnd));
+  }
 
   // Filter by status type
   if (
@@ -29,8 +37,12 @@ export default async (req, res) => {
     query.where("location_id", locationId);
   }
 
+  // TODO don't output lines
+
   // Execute query
-  const invoices = await query.withGraphJoined("[lines, location]");
+  const invoices = await query
+    .modify("defaultOrder")
+    .withGraphJoined("[lines, location]");
 
   // Respond
   res.statusCode = 200;
