@@ -7,6 +7,8 @@ import LocationSelectInput from "@components/inputs/LocationSelectInput";
 import InvoiceStatusInput from "@components/inputs/InvoiceStatusInput";
 import InvoiceStatusLabel from "@components/labels/InvoiceStatusLabel";
 import DateRangePicker from "@components/inputs/DateRangePicker";
+import { Container, Table, Alert, Row, Col, Card } from "react-bootstrap";
+import Head from "next/head";
 
 const getInvoicesApiUrl = (filters = {}) => {
   const { dateRange, statusType, locationId } = filters;
@@ -35,13 +37,10 @@ function renderTableBody(data) {
 
   return data.invoices.map((invoice, invoiceKey) => {
     return (
-      <tr
-        key={invoiceKey}
-        style={{ backgroundColor: invoiceKey % 2 == 0 ? "pink" : "white" }}
-      >
+      <tr key={invoiceKey}>
         <td>{invoice.id}</td>
         <td>{invoice.location.name}</td>
-        <td>{invoice.date}</td>
+        <td>{new Date(invoice.date).toLocaleDateString("en-GB")}</td>
         <td>
           <InvoiceStatusLabel>{invoice.status}</InvoiceStatusLabel>
         </td>
@@ -78,14 +77,33 @@ export default function Index(props) {
   if (!hasRendered) setHasRendered(true);
 
   return (
-    <div>
-      <div>
-        <DateRangePicker onChange={onFilterInputChange(setFilterDateRange)} />
-        <InvoiceStatusInput onChange={onFilterInputChange(setFilterStatus)} />
-        <LocationSelectInput onChange={onFilterInputChange(setFilterLocation)} />
-      </div>
+    <Container>
+      <Head>
+        <title>Invoices</title>
+      </Head>
 
-      <table>
+      <Card className="mt-3 mb-3">
+        <Card.Header>Filter</Card.Header>
+        <Container className="pt-3 pb-3">
+          <Row>
+            <Col>
+              <DateRangePicker onChange={onFilterInputChange(setFilterDateRange)} />
+            </Col>
+            <Col>
+              <InvoiceStatusInput onChange={onFilterInputChange(setFilterStatus)} />
+            </Col>
+            <Col>
+              <LocationSelectInput onChange={onFilterInputChange(setFilterLocation)} />
+            </Col>
+          </Row>
+        </Container>
+      </Card>
+
+      <Alert variant="info">
+        Showing {data && data.invoices ? data.invoices.length : 0} invoices.
+      </Alert>
+
+      <Table striped bordered hover>
         <thead>
           <tr>
             <th>ID</th>
@@ -96,7 +114,7 @@ export default function Index(props) {
           </tr>
         </thead>
         <tbody>{renderTableBody(data)}</tbody>
-      </table>
-    </div>
+      </Table>
+    </Container>
   );
 }

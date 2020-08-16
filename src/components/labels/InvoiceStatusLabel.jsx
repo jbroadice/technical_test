@@ -1,10 +1,24 @@
+import { Badge } from "react-bootstrap";
+
 export default function InvoiceStatusLabel(props) {
   switch (props.children) {
     case "draft":
-      return <strong style={{ color: "grey" }}>DRAFT</strong>;
+      return (
+        <Badge pill variant="warning">
+          DRAFT
+        </Badge>
+      );
     case "open":
-      return <strong style={{ color: "red" }}>OPEN</strong>;
+      return (
+        <Badge pill variant="info">
+          OPEN
+        </Badge>
+      );
     case "processed":
-      return <strong style={{ color: "green" }}>PROCESSED</strong>;
+      return (
+        <Badge pill variant="success">
+          PROCESSED
+        </Badge>
+      );
   }
 }
