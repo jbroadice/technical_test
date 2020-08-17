@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "postinstall": "cp -n .env.example .env || true",
+    "db:init": "knex migrate:up && knex seed:run",
     "dev": "NODE_OPTIONS='--inspect' next dev",
     "build": "next build",
     "start": "next start",
