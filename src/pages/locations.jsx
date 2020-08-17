@@ -8,7 +8,14 @@ import InvoiceStatusLabel from "@components/labels/InvoiceStatusLabel";
 
 export default function Locations() {
   const [locationResult, setLocationResult] = useState(null);
-  const onLocationCHange = async ({ value }) => {
+  const onLocationCHange = async (option) => {
+    const value = option && option.value;
+
+    if (!value) {
+      setLocationResult(null);
+      return;
+    }
+
     const apiUrl = `/api/locations/invoiceSumsGroupedByStatus?locationId=${value}`;
     const result = await fetcher(apiUrl);
     setLocationResult(result);
