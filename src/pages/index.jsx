@@ -3,12 +3,12 @@ import useSWR from "swr";
 import fetcher from "@lib/fetcher";
 import objectToQueryParamsString from "@lib/objectToQueryParamsString";
 
+import Head from "next/head";
 import LocationSelectInput from "@components/inputs/LocationSelectInput";
 import InvoiceStatusInput from "@components/inputs/InvoiceStatusInput";
 import InvoiceStatusLabel from "@components/labels/InvoiceStatusLabel";
 import DateRangePicker from "@components/inputs/DateRangePicker";
 import { Container, Table, Alert, Row, Col, Card } from "react-bootstrap";
-import Head from "next/head";
 
 const getInvoicesApiUrl = (filters = {}) => {
   const { dateRange, statusType, locationId } = filters;
@@ -23,38 +23,6 @@ const getInvoicesApiUrl = (filters = {}) => {
   return `/api/invoices?${queryParams}`;
 };
 
-const onFilterInputChange = (setFilterFunc) => (option) => {
-  const value = (option && option.value) || option;
-  setFilterFunc(value);
-};
-
-function renderTableBody(data) {
-  if (!data) return <p>Loading...</p>;
-
-  if (data.invoices.length === 0) {
-    return <p>No invoices found.</p>;
-  }
-
-  return data.invoices.map((invoice, invoiceKey) => {
-    return (
-      <tr key={invoiceKey}>
-        <td>{invoice.id}</td>
-        <td>{invoice.location.name}</td>
-        <td>{new Date(invoice.date).toLocaleDateString("en-GB")}</td>
-        <td>
-          <InvoiceStatusLabel>{invoice.status}</InvoiceStatusLabel>
-        </td>
-        <td>
-          {new Intl.NumberFormat("en-GB", {
-            style: "currency",
-            currency: "GBP",
-          }).format(invoice.totalValue)}
-        </td>
-      </tr>
-    );
-  });
-}
-
 export async function getServerSideProps() {
   const data = await fetcher(getInvoicesApiUrl());
   return { props: { data } };
@@ -64,17 +32,19 @@ export default function Index(props) {
   const [dateRange, setFilterDateRange] = useState(null);
   const [statusType, setFilterStatus] = useState(null);
   const [locationId, setFilterLocation] = useState(null);
-  const [hasRendered, setHasRendered] = useState(false);
+  const [hasFilterChanged, setHasFilterChanged] = useState(false);
+
+  const onFilterInputChange = (setFilterFunc) => (option) => {
+    const value = (option && option.value) || option;
+    setFilterFunc(value);
+    setHasFilterChanged(true);
+  };
 
   const { data } = useSWR(
     getInvoicesApiUrl({ dateRange, statusType, locationId }),
     fetcher,
-    {
-      initialData: hasRendered ? undefined : props.data,
-    },
+    { initialData: hasFilterChanged ? undefined : props.data },
   );
-
-  if (!hasRendered) setHasRendered(true);
 
   return (
     <Container>
@@ -117,4 +87,44 @@ export default function Index(props) {
       </Table>
     </Container>
   );
+}
+
+function renderTableBody(data) {
+  if (!data)
+    return (
+      <tr>
+        <td colSpan={5}>
+          <p>Loading...</p>
+        </td>
+      </tr>
+    );
+
+  if (data.invoices.length === 0) {
+    return (
+      <tr>
+        <td colSpan={5}>
+          <p>No invoices found.</p>
+        </td>
+      </tr>
+    );
+  }
+
+  return data.invoices.map((invoice, invoiceKey) => {
+    return (
+      <tr key={invoiceKey}>
+        <td>{invoice.id}</td>
+        <td>{invoice.location.name}</td>
+        <td>{new Date(invoice.date).toLocaleDateString("en-GB")}</td>
+        <td>
+          <InvoiceStatusLabel>{invoice.status}</InvoiceStatusLabel>
+        </td>
+        <td>
+          {new Intl.NumberFormat("en-GB", {
+            style: "currency",
+            currency: "GBP",
+          }).format(invoice.totalValue)}
+        </td>
+      </tr>
+    );
+  });
 }
